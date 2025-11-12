@@ -65,6 +65,11 @@ export function AuthDialog({
       value: AuthType.USE_VERTEX_AI,
       key: AuthType.USE_VERTEX_AI,
     },
+    {
+      label: 'OpenAI-Compatible Local Service',
+      value: AuthType.USE_OPENAI_COMPATIBLE,
+      key: AuthType.USE_OPENAI_COMPATIBLE,
+    },
   ];
 
   if (settings.merged.security?.auth?.enforcedType) {
@@ -93,6 +98,10 @@ export function AuthDialog({
 
     if (process.env['GEMINI_API_KEY']) {
       return item.value === AuthType.USE_GEMINI;
+    }
+
+    if (process.env['OPENAI_BASE_URL']) {
+      return item.value === AuthType.USE_OPENAI_COMPATIBLE;
     }
 
     return item.value === AuthType.LOGIN_WITH_GOOGLE;
@@ -124,6 +133,12 @@ Logging in with Google... Please restart Gemini CLI to continue.
       }
       if (authType === AuthType.USE_GEMINI) {
         setAuthState(AuthState.AwaitingApiKeyInput);
+        return;
+      }
+      if (authType === AuthType.USE_OPENAI_COMPATIBLE) {
+        // OpenAI-compatible mode doesn't need additional input
+        // Just proceed with authentication using env vars or defaults
+        setAuthState(AuthState.Unauthenticated);
         return;
       }
       setAuthState(AuthState.Unauthenticated);

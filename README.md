@@ -190,6 +190,43 @@ export GOOGLE_GENAI_USE_VERTEXAI=true
 gemini
 ```
 
+### Option 4: OpenAI-Compatible Local Service
+
+**✨ Best for:** Privacy-conscious users, offline development, or using local
+LLMs
+
+**Benefits:**
+
+- **Complete privacy**: All data stays on your machine
+- **Offline capability**: No internet required once models are downloaded
+- **Cost-effective**: No API costs for local models
+- **Model flexibility**: Use any OpenAI-compatible service (vLLM, llama.cpp,
+  Ollama, LocalAI, etc.)
+
+```bash
+# Set your local service endpoint and model
+export OPENAI_BASE_URL="http://localhost:8000/v1"
+export OPENAI_MODEL="your-model-name"
+export OPENAI_API_KEY="dummy-key"  # Optional, some services don't need this
+
+# Start Gemini CLI and select "OpenAI-Compatible Local Service"
+gemini
+```
+
+**Compatible Services:**
+
+- ✅ [vLLM](https://docs.vllm.ai/) - High-performance LLM inference
+- ✅ [llama.cpp](https://github.com/ggerganov/llama.cpp) - Efficient C++
+  implementation
+- ✅ [Ollama](https://ollama.ai/) - Easy local model management
+- ✅ [LocalAI](https://localai.io/) - Drop-in OpenAI replacement
+- ✅
+  [Text Generation Inference (TGI)](https://github.com/huggingface/text-generation-inference) -
+  Hugging Face's inference server
+
+For detailed setup instructions, see
+[OPENAI_INTEGRATION.md](./OPENAI_INTEGRATION.md).
+
 For Google Workspace accounts and other authentication methods, see the
 [authentication guide](./docs/get-started/authentication.md).
 
