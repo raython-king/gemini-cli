@@ -111,6 +111,33 @@ npm install -g @google/gemini-cli@nightly
 - Conversation checkpointing to save and resume complex sessions
 - Custom context files (GEMINI.md) to tailor behavior for your projects
 
+### Multi-Agent System (NEW) 🤖
+
+Gemini CLI now features a powerful multi-agent system inspired by Claude Code,
+with specialized agents that collaborate on complex tasks:
+
+- **Plan Agent**: Creates detailed implementation plans with risk assessment and
+  dependency analysis
+- **Explore Agent**: Fast codebase exploration and architectural insights
+- **Code Reviewer Agent**: Automated code review for quality, security, and
+  performance
+- **Test Runner Agent**: Runs tests, analyzes failures, and applies fixes
+  automatically
+- **Debug Agent**: Systematic bug reproduction, root cause analysis, and fixing
+- **Refactor Agent**: Safe code refactoring while preserving functionality
+
+**Key Features:**
+
+- **Parallel Execution**: Run multiple agents concurrently for maximum
+  efficiency
+- **Intelligent Orchestration**: Automatic agent selection based on task
+  complexity
+- **Specialized Expertise**: Each agent optimized for specific development tasks
+- **Comprehensive Output**: Structured reports with actionable insights
+
+See [MULTI_AGENT_GUIDE.md](./MULTI_AGENT_GUIDE.md) for detailed usage examples
+and best practices.
+
 ### GitHub Integration
 
 Integrate Gemini CLI directly into your GitHub workflows with

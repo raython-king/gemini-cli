@@ -7,6 +7,12 @@
 import type { Config } from '../config/config.js';
 import type { AgentDefinition } from './types.js';
 import { CodebaseInvestigatorAgent } from './codebase-investigator.js';
+import { PlanAgent } from './plan-agent.js';
+import { ExploreAgent } from './explore-agent.js';
+import { CodeReviewerAgent } from './code-reviewer-agent.js';
+import { TestRunnerAgent } from './test-runner-agent.js';
+import { DebugAgent } from './debug-agent.js';
+import { RefactorAgent } from './refactor-agent.js';
 import { type z } from 'zod';
 import { debugLogger } from '../utils/debugLogger.js';
 
@@ -36,7 +42,7 @@ export class AgentRegistry {
   private loadBuiltInAgents(): void {
     const investigatorSettings = this.config.getCodebaseInvestigatorSettings();
 
-    // Only register the agent if it's enabled in the settings.
+    // Register the original Codebase Investigator Agent if enabled
     if (investigatorSettings?.enabled) {
       const agentDef = {
         ...CodebaseInvestigatorAgent,
@@ -60,6 +66,32 @@ export class AgentRegistry {
         },
       };
       this.registerAgent(agentDef);
+    }
+
+    // Register new specialized agents (enabled by default)
+    // TODO: Add config options to enable/disable individual agents
+    // Register Plan Agent
+    this.registerAgent(PlanAgent);
+
+    // Register Explore Agent (faster alternative to CodebaseInvestigator)
+    this.registerAgent(ExploreAgent);
+
+    // Register Code Reviewer Agent
+    this.registerAgent(CodeReviewerAgent);
+
+    // Register Test Runner Agent
+    this.registerAgent(TestRunnerAgent);
+
+    // Register Debug Agent
+    this.registerAgent(DebugAgent);
+
+    // Register Refactor Agent
+    this.registerAgent(RefactorAgent);
+
+    if (this.config.getDebugMode()) {
+      debugLogger.log(
+        `[AgentRegistry] Registered 6 specialized multi-agent system agents`,
+      );
     }
   }
 

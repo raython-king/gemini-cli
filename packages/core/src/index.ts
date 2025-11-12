@@ -142,3 +142,21 @@ export * from './test-utils/index.js';
 
 // Export hook types
 export * from './hooks/types.js';
+
+// Export agent system
+export * from './agents/types.js';
+export * from './agents/executor.js';
+export * from './agents/registry.js';
+export * from './agents/invocation.js';
+export * from './agents/subagent-tool-wrapper.js';
+export * from './agents/parallel-executor.js';
+export * from './agents/orchestrator.js';
+
+// Export specialized agents
+export { CodebaseInvestigatorAgent } from './agents/codebase-investigator.js';
+export { PlanAgent } from './agents/plan-agent.js';
+export { ExploreAgent } from './agents/explore-agent.js';
+export { CodeReviewerAgent } from './agents/code-reviewer-agent.js';
+export { TestRunnerAgent } from './agents/test-runner-agent.js';
+export { DebugAgent } from './agents/debug-agent.js';
+export { RefactorAgent } from './agents/refactor-agent.js';
