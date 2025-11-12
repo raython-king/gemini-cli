@@ -22,6 +22,7 @@ import { LoggingContentGenerator } from './loggingContentGenerator.js';
 import { InstallationManager } from '../utils/installationManager.js';
 import { FakeContentGenerator } from './fakeContentGenerator.js';
 import { RecordingContentGenerator } from './recordingContentGenerator.js';
+import { OpenAIContentGenerator } from './openaiContentGenerator.js';
 
 /**
  * Interface abstracting the core functionalities for generating content and counting tokens.
@@ -49,6 +50,7 @@ export enum AuthType {
   USE_GEMINI = 'gemini-api-key',
   USE_VERTEX_AI = 'vertex-ai',
   CLOUD_SHELL = 'cloud-shell',
+  USE_OPENAI_COMPATIBLE = 'openai-compatible',
 }
 
 export type ContentGeneratorConfig = {
@@ -56,6 +58,8 @@ export type ContentGeneratorConfig = {
   vertexai?: boolean;
   authType?: AuthType;
   proxy?: string;
+  openaiBaseUrl?: string;
+  openaiModel?: string;
 };
 
 export async function createContentGeneratorConfig(
@@ -97,6 +101,18 @@ export async function createContentGeneratorConfig(
   ) {
     contentGeneratorConfig.apiKey = googleApiKey;
     contentGeneratorConfig.vertexai = true;
+
+    return contentGeneratorConfig;
+  }
+
+  // OpenAI-compatible local service
+  if (authType === AuthType.USE_OPENAI_COMPATIBLE) {
+    contentGeneratorConfig.openaiBaseUrl =
+      process.env['OPENAI_BASE_URL'] || 'http://localhost:8000/v1';
+    contentGeneratorConfig.apiKey =
+      process.env['OPENAI_API_KEY'] || 'dummy-key';
+    contentGeneratorConfig.openaiModel =
+      process.env['OPENAI_MODEL'] || 'gpt-3.5-turbo';
 
     return contentGeneratorConfig;
   }
@@ -156,6 +172,16 @@ export async function createContentGenerator(
       });
       return new LoggingContentGenerator(googleGenAI.models, gcConfig);
     }
+
+    if (config.authType === AuthType.USE_OPENAI_COMPATIBLE) {
+      const openaiGenerator = new OpenAIContentGenerator({
+        baseUrl: config.openaiBaseUrl || 'http://localhost:8000/v1',
+        apiKey: config.apiKey,
+        model: config.openaiModel,
+      });
+      return new LoggingContentGenerator(openaiGenerator, gcConfig);
+    }
+
     throw new Error(
       `Error creating contentGenerator: Unsupported authType: ${config.authType}`,
     );
