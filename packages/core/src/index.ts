@@ -160,3 +160,6 @@ export { CodeReviewerAgent } from './agents/code-reviewer-agent.js';
 export { TestRunnerAgent } from './agents/test-runner-agent.js';
 export { DebugAgent } from './agents/debug-agent.js';
 export { RefactorAgent } from './agents/refactor-agent.js';
+
+// Export context engineering system
+export * from './agents/context/index.js';
