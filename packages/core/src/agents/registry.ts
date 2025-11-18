@@ -22,6 +22,9 @@ import { LLMResearchAgent } from './research/llm-research-agent.js';
 import { CVResearchAgent } from './research/cv-research-agent.js';
 import { ExperimentAgent } from './research/experiment-agent.js';
 import { ModelEvaluationAgent } from './research/model-evaluation-agent.js';
+import { FoundationModelAgent } from './research/foundation-model-agent.js';
+import { ScalingLawAgent } from './research/scaling-law-agent.js';
+import { MultiModalAgent } from './research/multimodal-agent.js';
 
 /**
  * Manages the discovery, loading, validation, and registration of
@@ -106,9 +109,14 @@ export class AgentRegistry {
     this.registerAgent(ExperimentAgent);
     this.registerAgent(ModelEvaluationAgent);
 
+    // Register Foundation Model & Scaling Law Agents
+    this.registerAgent(FoundationModelAgent);
+    this.registerAgent(ScalingLawAgent);
+    this.registerAgent(MultiModalAgent);
+
     if (this.config.getDebugMode()) {
       debugLogger.log(
-        `[AgentRegistry] Registered 13 specialized multi-agent system agents (9 general + 4 research)`,
+        `[AgentRegistry] Registered 16 specialized multi-agent system agents (9 general + 7 research)`,
       );
     }
   }
