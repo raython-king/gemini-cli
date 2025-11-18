@@ -7,6 +7,9 @@
 import type { Config } from '../config/config.js';
 import type { AgentDefinition } from './types.js';
 import { CodebaseInvestigatorAgent } from './codebase-investigator.js';
+import { HardwareAnalyzerAgent } from './hardware-analyzer-agent.js';
+import { TrainingStrategyAgent } from './training-strategy-agent.js';
+import { TrainingExecutorAgent } from './training-executor-agent.js';
 import { type z } from 'zod';
 import { debugLogger } from '../utils/debugLogger.js';
 
@@ -61,6 +64,15 @@ export class AgentRegistry {
       };
       this.registerAgent(agentDef);
     }
+
+    // Register Hardware Analyzer Agent (enabled by default)
+    this.registerAgent(HardwareAnalyzerAgent);
+
+    // Register Training Strategy Agent (enabled by default)
+    this.registerAgent(TrainingStrategyAgent);
+
+    // Register Training Executor Agent (enabled by default)
+    this.registerAgent(TrainingExecutorAgent);
   }
 
   /**
