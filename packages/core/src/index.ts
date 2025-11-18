@@ -188,3 +188,23 @@ export {
   type AnalysisTask,
   type AnalysisResult,
 } from './agents/analysis/analysis-orchestrator.js';
+
+// Export multi-agent collaboration system
+export {
+  TaskDecomposer,
+  type Subtask,
+  type DecompositionResult,
+} from './agents/task-decomposer.js';
+export {
+  MultiAgentCoordinator,
+  SubtaskStatus,
+  type SubtaskExecutionStatus,
+  type CoordinatorStatus,
+  type StatusUpdateCallback,
+} from './agents/multi-agent-coordinator.js';
+export {
+  CollaborativeExecutor,
+  type CollaborativeEvent,
+  type CollaborativeExecutionOptions,
+  type CollaborativeResult,
+} from './agents/collaborative-executor.js';
