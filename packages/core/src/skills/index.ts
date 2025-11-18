@@ -18,6 +18,7 @@ export { PromptOptimizationSkill } from './llm/prompt-optimization-skill.js';
 export { ObjectDetectionSkill } from './cv/object-detection-skill.js';
 export { ModelQuantizationSkill } from './cv/model-quantization-skill.js';
 export { FoundationModelTrainingSkill } from './cv/foundation-model-training-skill.js';
+export { ModernFoundationModelSkill } from './cv/modern-foundation-model-skill.js';
 
 // Export Research skills
 export { ScalingLawAnalysisSkill } from './research/scaling-law-analysis-skill.js';
@@ -28,6 +29,7 @@ import { PromptOptimizationSkill } from './llm/prompt-optimization-skill.js';
 import { ObjectDetectionSkill } from './cv/object-detection-skill.js';
 import { ModelQuantizationSkill } from './cv/model-quantization-skill.js';
 import { FoundationModelTrainingSkill } from './cv/foundation-model-training-skill.js';
+import { ModernFoundationModelSkill } from './cv/modern-foundation-model-skill.js';
 import { ScalingLawAnalysisSkill } from './research/scaling-law-analysis-skill.js';
 
 export const BUILT_IN_SKILLS = [
@@ -36,5 +38,6 @@ export const BUILT_IN_SKILLS = [
   ObjectDetectionSkill,
   ModelQuantizationSkill,
   FoundationModelTrainingSkill,
+  ModernFoundationModelSkill,
   ScalingLawAnalysisSkill,
 ];
