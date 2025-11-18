@@ -4,7 +4,7 @@
 
 Gemini CLI now features a powerful multi-agent system inspired by Claude Code,
 enabling specialized agents to collaborate on complex coding tasks. This system
-includes 6 specialized agents that can work independently or in parallel to
+includes 9 specialized agents that can work independently or in parallel to
 handle different aspects of software development.
 
 ## Available Agents
@@ -299,6 +299,170 @@ const result = await executor.run(
 
 ---
 
+### 7. **Data Flow Agent** (`data_flow_agent`)
+
+**Purpose**: Automated data flow processing and transformation with quality
+assessment.
+
+**Use Cases**:
+
+- Processing and transforming data from various sources
+- Extracting structured information from unstructured data
+- Validating data quality and identifying issues
+- Creating data processing pipelines
+- Aggregating and analyzing data patterns
+- Converting between data formats
+
+**Example Usage**:
+
+```typescript
+import { DataFlowAgent, AgentExecutor } from '@google/gemini-cli-core';
+
+const executor = await AgentExecutor.create(DataFlowAgent, runtimeContext);
+
+const result = await executor.run(
+  {
+    dataSource: 'data/users.json',
+    task: 'Extract user information and validate email formats',
+    outputFormat: 'JSON',
+    validationRules: 'email must be valid, age > 0, name required',
+  },
+  abortSignal,
+);
+```
+
+**Output Structure**:
+
+- Summary: High-level summary of data processing results
+- DataSource: Information about the data source (type, location, format, record
+  count)
+- Transformations: List of transformations applied with detailed logic
+- DataQuality: Assessment with completeness, accuracy, consistency scores
+- OutputSchema: Schema of the output data
+- Insights: Key insights discovered during data processing
+- NextSteps: Recommended next steps for data pipeline improvement
+
+---
+
+### 8. **Literature Analyzer Agent** (`literature_analyzer_agent`)
+
+**Purpose**: Deep analysis of academic and technical literature.
+
+**Use Cases**:
+
+- Analyzing research papers and technical documents
+- Extracting key concepts, methodologies, and findings
+- Understanding complex academic or technical content
+- Identifying themes across multiple documents
+- Synthesizing information from various sources
+- Evaluating research quality and contributions
+- Extracting and organizing citations
+
+**Depth Levels**:
+
+- `overview`: High-level summary and main points (5-10 turns)
+- `detailed`: Thorough analysis with key insights (15-20 turns, default)
+- `comprehensive`: Deep dive with extensive cross-referencing (25-30 turns)
+
+**Example Usage**:
+
+```typescript
+import {
+  LiteratureAnalyzerAgent,
+  AgentExecutor,
+} from '@google/gemini-cli-core';
+
+const executor = await AgentExecutor.create(
+  LiteratureAnalyzerAgent,
+  runtimeContext,
+);
+
+const result = await executor.run(
+  {
+    document: 'papers/ml-architecture-2024.md',
+    focus: 'methodology',
+    depth: 'detailed',
+    compareTo: ['papers/related-work-2023.md'],
+  },
+  abortSignal,
+);
+```
+
+**Output Structure**:
+
+- Summary: Comprehensive summary (200-300 words)
+- Citation: Citation information if available
+- MainThemes: 3-5 main themes or topics covered
+- KeyConcepts: Important concepts with definitions and relevance levels
+- Methodology: Research approach, methods, data sources, limitations
+- KeyFindings: Most important findings with evidence and significance
+- CriticalAnalysis: Strengths, weaknesses, and key contributions
+- RelatedWork: Related works cited or referenced
+- FutureDirections: Suggested future research directions
+- PracticalApplications: Practical applications or use cases
+
+---
+
+### 9. **Summarizer Agent** (`summarizer_agent`)
+
+**Purpose**: Intelligent multi-document summarization and synthesis.
+
+**Use Cases**:
+
+- Generating concise summaries of long documents
+- Synthesizing information from multiple sources
+- Extracting key points and insights
+- Creating executive summaries for quick overview
+- Organizing complex information hierarchically
+- Identifying main themes and patterns
+- Generating actionable recommendations
+
+**Summarization Styles**:
+
+- `executive`: Focus on high-level insights and implications (default)
+- `technical`: Include specific details and methodologies
+- `academic`: Emphasize research findings and evidence
+- `narrative`: Create engaging, story-like flow
+
+**Summary Lengths**:
+
+- `brief`: Maximum compression, 50-250 words total
+- `moderate`: Balanced approach, 300-650 words total (default)
+- `comprehensive`: Minimal information loss, 500-1000 words total
+
+**Example Usage**:
+
+```typescript
+import { SummarizerAgent, AgentExecutor } from '@google/gemini-cli-core';
+
+const executor = await AgentExecutor.create(SummarizerAgent, runtimeContext);
+
+const result = await executor.run(
+  {
+    sources: ['docs/report1.md', 'docs/report2.md', 'docs/report3.md'],
+    style: 'executive',
+    length: 'moderate',
+    focus: ['performance', 'scalability'],
+    includeActionItems: true,
+  },
+  abortSignal,
+);
+```
+
+**Output Structure**:
+
+- ExecutiveSummary: High-level overview (100-150 words)
+- DetailedSummary: Comprehensive coverage (300-500 words)
+- KeyPoints: Most important points with categories and importance levels
+- Sections: Organized sections for structured content
+- Themes: Main themes or topics identified
+- Statistics: Summary statistics (source count, word count, compression ratio)
+- ActionItems: Actionable recommendations with priorities
+- Gaps: Information gaps or missing pieces
+- RelatedTopics: Related topics worth exploring
+
+---
+
 ## Parallel Execution
 
 Use `ParallelAgentExecutor` to run multiple agents concurrently:
@@ -520,6 +684,10 @@ Current agents:
 - ✅ `test_runner` (NEW)
 - ✅ `debug_agent` (NEW)
 - ✅ `refactor_agent` (NEW)
+- ✅ `data_flow_agent` (NEW - data processing and transformation)
+- ✅ `literature_analyzer_agent` (NEW - academic and technical literature
+  analysis)
+- ✅ `summarizer_agent` (NEW - multi-document summarization)
 
 ---
 
@@ -591,13 +759,16 @@ try {
 
 | Feature             | Gemini CLI Multi-Agent       | Claude Code  |
 | ------------------- | ---------------------------- | ------------ |
-| Specialized Agents  | 6 agents                     | ~10+ agents  |
+| Specialized Agents  | 9 agents                     | ~10+ agents  |
 | Parallel Execution  | ✅ Via ParallelAgentExecutor | ✅ Built-in  |
 | Plan Mode           | ✅ Via Plan Agent            | ✅ Built-in  |
 | Code Review         | ✅ Via Code Reviewer Agent   | ✅ Built-in  |
 | Test Runner         | ✅ Via Test Runner Agent     | ✅ Built-in  |
 | Debugging           | ✅ Via Debug Agent           | ✅ Built-in  |
 | Refactoring         | ✅ Via Refactor Agent        | ✅ Built-in  |
+| Data Processing     | ✅ Via Data Flow Agent       | ⚠️ Limited   |
+| Literature Analysis | ✅ Via Literature Analyzer   | ⚠️ Limited   |
+| Summarization       | ✅ Via Summarizer Agent      | ⚠️ Limited   |
 | Agent Orchestration | ✅ Via AgentOrchestrator     | ✅ Automatic |
 | UI Integration      | 🚧 Planned                   | ✅ Built-in  |
 

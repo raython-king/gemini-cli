@@ -7,9 +7,8 @@
 /**
  * Analysis module - Data flow processing and literature analysis.
  *
- * This module provides tools for automated data flow processing.
- * Additional agents (DataFlowAgent, LiteratureAnalyzerAgent, SummarizerAgent,
- * AnalysisOrchestrator) are in development and will be added in a future update.
+ * This module provides tools for automated data flow processing and
+ * specialized analysis agents for summarization, literature review, and data analysis.
  *
  * See README.md in this directory for more information.
  */
@@ -26,8 +25,15 @@ export {
   type PipelineResult,
 } from './data-pipeline.js';
 
-// Note: Agent exports temporarily disabled pending adaptation to new AgentDefinition structure
-// - DataFlowAgent, LiteratureAnalyzerAgent, SummarizerAgent
-// - AnalysisOrchestrator
-// See data-flow-agent.ts, literature-analyzer-agent.ts, summarizer-agent.ts,
-// and analysis-orchestrator.ts for prototypes
+// Export analysis agents
+export { SummarizerAgent } from './summarizer-agent.js';
+export { LiteratureAnalyzerAgent } from './literature-analyzer-agent.js';
+export { DataFlowAgent } from './data-flow-agent.js';
+
+// Export analysis orchestrator (adapted to new architecture)
+export {
+  AnalysisOrchestrator,
+  AnalysisWorkflowType,
+  type AnalysisTask,
+  type AnalysisResult,
+} from './analysis-orchestrator.js';

@@ -160,8 +160,11 @@ export { CodeReviewerAgent } from './agents/code-reviewer-agent.js';
 export { TestRunnerAgent } from './agents/test-runner-agent.js';
 export { DebugAgent } from './agents/debug-agent.js';
 export { RefactorAgent } from './agents/refactor-agent.js';
-// Note: New analysis agents (DataFlow, LiteratureAnalyzer, Summarizer) are in development
-// and will be added in a future update after adapting to the latest AgentDefinition structure
+
+// Export analysis agents
+export { DataFlowAgent } from './agents/analysis/data-flow-agent.js';
+export { LiteratureAnalyzerAgent } from './agents/analysis/literature-analyzer-agent.js';
+export { SummarizerAgent } from './agents/analysis/summarizer-agent.js';
 
 // Export context engineering system
 export * from './agents/context/index.js';
@@ -177,3 +180,11 @@ export {
   type PipelineStep,
   type PipelineResult,
 } from './agents/analysis/data-pipeline.js';
+
+// Export analysis orchestrator
+export {
+  AnalysisOrchestrator,
+  AnalysisWorkflowType,
+  type AnalysisTask,
+  type AnalysisResult,
+} from './agents/analysis/analysis-orchestrator.js';

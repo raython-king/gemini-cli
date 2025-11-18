@@ -15,6 +15,9 @@ import { DebugAgent } from './debug-agent.js';
 import { RefactorAgent } from './refactor-agent.js';
 import { type z } from 'zod';
 import { debugLogger } from '../utils/debugLogger.js';
+import { DataFlowAgent } from './analysis/data-flow-agent.js';
+import { LiteratureAnalyzerAgent } from './analysis/literature-analyzer-agent.js';
+import { SummarizerAgent } from './analysis/summarizer-agent.js';
 
 /**
  * Manages the discovery, loading, validation, and registration of
@@ -88,9 +91,14 @@ export class AgentRegistry {
     // Register Refactor Agent
     this.registerAgent(RefactorAgent);
 
+    // Register Analysis Agents
+    this.registerAgent(DataFlowAgent);
+    this.registerAgent(LiteratureAnalyzerAgent);
+    this.registerAgent(SummarizerAgent);
+
     if (this.config.getDebugMode()) {
       debugLogger.log(
-        `[AgentRegistry] Registered 6 specialized multi-agent system agents`,
+        `[AgentRegistry] Registered 9 specialized multi-agent system agents`,
       );
     }
   }
