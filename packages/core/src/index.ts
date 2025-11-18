@@ -208,3 +208,15 @@ export {
   type CollaborativeExecutionOptions,
   type CollaborativeResult,
 } from './agents/collaborative-executor.js';
+
+// Export research agents and algorithm workflow system
+export {
+  LLMResearchAgent,
+  CVResearchAgent,
+  ExperimentAgent,
+  ModelEvaluationAgent,
+  AlgorithmWorkflowOrchestrator,
+  AlgorithmWorkflowType,
+  AlgorithmDomain,
+  type AlgorithmWorkflowConfig,
+} from './agents/research/index.js';

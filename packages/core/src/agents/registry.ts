@@ -18,6 +18,10 @@ import { debugLogger } from '../utils/debugLogger.js';
 import { DataFlowAgent } from './analysis/data-flow-agent.js';
 import { LiteratureAnalyzerAgent } from './analysis/literature-analyzer-agent.js';
 import { SummarizerAgent } from './analysis/summarizer-agent.js';
+import { LLMResearchAgent } from './research/llm-research-agent.js';
+import { CVResearchAgent } from './research/cv-research-agent.js';
+import { ExperimentAgent } from './research/experiment-agent.js';
+import { ModelEvaluationAgent } from './research/model-evaluation-agent.js';
 
 /**
  * Manages the discovery, loading, validation, and registration of
@@ -96,9 +100,15 @@ export class AgentRegistry {
     this.registerAgent(LiteratureAnalyzerAgent);
     this.registerAgent(SummarizerAgent);
 
+    // Register Research Agents (Algorithm Development)
+    this.registerAgent(LLMResearchAgent);
+    this.registerAgent(CVResearchAgent);
+    this.registerAgent(ExperimentAgent);
+    this.registerAgent(ModelEvaluationAgent);
+
     if (this.config.getDebugMode()) {
       debugLogger.log(
-        `[AgentRegistry] Registered 9 specialized multi-agent system agents`,
+        `[AgentRegistry] Registered 13 specialized multi-agent system agents (9 general + 4 research)`,
       );
     }
   }
