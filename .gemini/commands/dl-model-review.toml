@@ -1,0 +1,164 @@
+description = "Comprehensive review of a deep learning model architecture and implementation"
+
+prompt = """
+## Mission: Deep Learning Model Review
+
+Your task is to perform a comprehensive review of a deep learning model, analyzing its architecture, implementation quality, performance characteristics, and providing actionable improvement suggestions.
+
+### Target Model/File:
+{{args}}
+
+### Review Workflow:
+
+#### Phase 1: Architecture Analysis
+
+1.  **Model Structure Examination**:
+    *   Identify the model architecture type (CNN, Transformer, RNN, GAN, etc.)
+    *   Map out the complete layer hierarchy and connections
+    *   Document input/output tensor shapes at each layer
+    *   Identify skip connections, attention mechanisms, and normalization layers
+    *   Check for proper initialization of weights and biases
+
+2.  **Design Pattern Assessment**:
+    *   Evaluate adherence to established architectural patterns (ResNet blocks, Inception modules, etc.)
+    *   Assess modularity and reusability of components
+    *   Check for proper separation of concerns (encoder/decoder, feature extraction/classification)
+    *   Verify consistency in layer naming conventions
+
+3.  **Capacity Analysis**:
+    *   Calculate total parameter count (trainable vs non-trainable)
+    *   Estimate memory footprint for different batch sizes
+    *   Identify potential bottlenecks in model capacity
+    *   Assess if model complexity matches task requirements
+
+#### Phase 2: Code Quality Review
+
+1.  **Implementation Best Practices**:
+    *   Check for proper use of framework APIs (PyTorch, TensorFlow, JAX)
+    *   Verify correct handling of device placement (CPU/GPU/TPU)
+    *   Assess error handling and input validation
+    *   Review docstrings and inline documentation
+    *   Check for type hints and annotations
+
+2.  **Code Organization**:
+    *   Evaluate file structure and module organization
+    *   Assess class inheritance and composition patterns
+    *   Check for code duplication and opportunities for abstraction
+    *   Review import statements and dependencies
+
+3.  **Testing and Reproducibility**:
+    *   Check for unit tests covering model components
+    *   Verify random seed handling for reproducibility
+    *   Assess configuration management (hyperparameters, paths)
+    *   Review logging and experiment tracking integration
+
+#### Phase 3: Performance Analysis
+
+1.  **Computational Efficiency**:
+    *   Identify unnecessary operations or redundant computations
+    *   Check for efficient tensor operations (avoid loops where vectorization possible)
+    *   Assess memory efficiency (in-place operations, gradient checkpointing)
+    *   Review data loading and preprocessing pipeline
+
+2.  **Training Considerations**:
+    *   Evaluate loss function appropriateness for the task
+    *   Check optimizer configuration and learning rate scheduling
+    *   Assess regularization techniques (dropout, weight decay, etc.)
+    *   Review gradient clipping and stability measures
+
+3.  **Inference Optimization**:
+    *   Check for eval mode handling and gradient disabling
+    *   Assess batch processing capabilities
+    *   Identify opportunities for model compilation (torch.compile, XLA)
+    *   Review caching strategies for repeated computations
+
+#### Phase 4: Suggestions and Recommendations
+
+1.  **Architecture Improvements**:
+    *   Suggest alternative architectures or components
+    *   Recommend attention mechanisms or normalization techniques
+    *   Propose efficient variants (MobileNet, EfficientNet patterns)
+    *   Identify missing components (residual connections, layer norm)
+
+2.  **Code Refactoring**:
+    *   Propose specific refactoring for better maintainability
+    *   Suggest design patterns to improve code structure
+    *   Recommend testing strategies and coverage improvements
+    *   Identify opportunities for configuration externalization
+
+3.  **Performance Optimizations**:
+    *   Recommend mixed precision training setup
+    *   Suggest gradient accumulation for memory efficiency
+    *   Propose distributed training strategies
+    *   Identify quantization and pruning opportunities
+
+4.  **Documentation Needs**:
+    *   List missing documentation requirements
+    *   Suggest README improvements
+    *   Recommend architecture diagrams or visualizations
+    *   Propose API documentation enhancements
+
+### Output Format:
+
+Provide your review in the following structure:
+
+```markdown
+# Deep Learning Model Review Report
+
+## Executive Summary
+[2-3 sentence overview of the model and key findings]
+
+## Architecture Analysis
+### Model Overview
+[Architecture diagram in ASCII or description]
+
+### Layer Analysis
+| Layer | Type | Input Shape | Output Shape | Parameters |
+|-------|------|-------------|--------------|------------|
+| ... | ... | ... | ... | ... |
+
+### Key Observations
+- [Observation 1]
+- [Observation 2]
+
+## Code Quality Assessment
+### Strengths
+- [Strength 1]
+- [Strength 2]
+
+### Areas for Improvement
+- [Issue 1]: [Specific recommendation]
+- [Issue 2]: [Specific recommendation]
+
+## Performance Evaluation
+### Computational Profile
+- Total Parameters: X
+- Estimated FLOPs: Y
+- Memory Footprint: Z
+
+### Identified Bottlenecks
+1. [Bottleneck description and solution]
+
+## Prioritized Recommendations
+### Critical (Must Fix)
+1. [Recommendation with code example]
+
+### High Priority
+1. [Recommendation with code example]
+
+### Nice to Have
+1. [Recommendation]
+
+## Code Examples
+[Provide specific code snippets for key recommendations]
+```
+
+### Constraints:
+
+1.  **Evidence-Based**: All observations must reference specific code locations with file paths and line numbers.
+2.  **Actionable**: Every issue identified must include a concrete solution or recommendation.
+3.  **Prioritized**: Clearly rank recommendations by impact and urgency.
+4.  **Framework-Aware**: Tailor suggestions to the specific deep learning framework being used.
+
+Begin your review by first locating and reading the model files, then systematically work through each phase of the review.
+"""

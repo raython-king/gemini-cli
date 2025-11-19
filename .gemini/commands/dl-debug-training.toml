@@ -1,0 +1,315 @@
+description = "Diagnose and debug deep learning training issues systematically"
+
+prompt = """
+## Mission: Debug Deep Learning Training
+
+Your task is to systematically diagnose and resolve training issues in deep learning models. You will analyze symptoms, identify root causes, and provide specific fixes.
+
+### Issue Description/Training Logs:
+{{args}}
+
+### Debugging Workflow:
+
+#### Phase 1: Loss Curve Analysis
+
+1.  **Loss Pattern Diagnosis**:
+    *   **Loss not decreasing**:
+        - Learning rate too low or too high
+        - Model capacity insufficient
+        - Data loading issues (constant input)
+        - Incorrect loss function for task
+    *   **Loss exploding (NaN/Inf)**:
+        - Learning rate too high
+        - Numerical instability in operations
+        - Missing gradient clipping
+        - Division by zero in custom layers
+    *   **Loss oscillating**:
+        - Learning rate too high
+        - Batch size too small
+        - Noisy gradients from data augmentation
+    *   **Loss plateauing early**:
+        - Learning rate needs scheduling
+        - Model stuck in local minimum
+        - Insufficient model capacity
+
+2.  **Diagnostic Commands**:
+    ```python
+    # Check for NaN in loss
+    if torch.isnan(loss):
+        print("NaN detected in loss!")
+        for name, param in model.named_parameters():
+            if param.grad is not None:
+                if torch.isnan(param.grad).any():
+                    print(f"NaN gradient in {name}")
+
+    # Monitor loss statistics
+    print(f"Loss: {loss.item():.6f}, "
+          f"Min: {losses.min():.6f}, "
+          f"Max: {losses.max():.6f}, "
+          f"Std: {losses.std():.6f}")
+    ```
+
+3.  **Validation vs Training Loss**:
+    *   **Val loss >> Train loss**: Overfitting
+    *   **Val loss << Train loss**: Data leakage or bug
+    *   **Both high**: Underfitting
+    *   **Both erratic**: Data quality issues
+
+#### Phase 2: Gradient Issues Detection
+
+1.  **Gradient Health Checks**:
+    ```python
+    def check_gradients(model):
+        total_norm = 0
+        for name, param in model.named_parameters():
+            if param.grad is not None:
+                param_norm = param.grad.data.norm(2)
+                total_norm += param_norm.item() ** 2
+
+                # Check for issues
+                if param_norm == 0:
+                    print(f"Zero gradient: {name}")
+                elif param_norm > 1000:
+                    print(f"Exploding gradient: {name} = {param_norm}")
+                elif param_norm < 1e-7:
+                    print(f"Vanishing gradient: {name} = {param_norm}")
+
+        total_norm = total_norm ** 0.5
+        print(f"Total gradient norm: {total_norm}")
+        return total_norm
+    ```
+
+2.  **Common Gradient Problems**:
+    *   **Vanishing Gradients**:
+        - Deep networks without skip connections
+        - Sigmoid/tanh activations in deep networks
+        - Improper weight initialization
+        - Solution: ResNet connections, LayerNorm, better init
+    *   **Exploding Gradients**:
+        - RNNs/LSTMs without gradient clipping
+        - High learning rate
+        - Solution: Gradient clipping, reduce LR
+    *   **Dead Neurons**:
+        - ReLU with negative bias initialization
+        - Solution: LeakyReLU, proper initialization
+
+3.  **Gradient Flow Visualization**:
+    ```python
+    # Register hooks to monitor gradients
+    def hook_fn(name):
+        def hook(grad):
+            print(f"{name}: mean={grad.mean():.6f}, std={grad.std():.6f}")
+        return hook
+
+    for name, param in model.named_parameters():
+        param.register_hook(hook_fn(name))
+    ```
+
+#### Phase 3: Learning Rate Diagnosis
+
+1.  **Learning Rate Range Test**:
+    ```python
+    # LR finder implementation
+    lrs = []
+    losses = []
+
+    for batch_idx, (data, target) in enumerate(train_loader):
+        lr = 1e-7 * (10 ** (batch_idx / 100))
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = lr
+
+        loss = train_step(model, data, target)
+        lrs.append(lr)
+        losses.append(loss)
+
+        if loss > 4 * min(losses):
+            break
+
+    # Plot to find optimal LR
+    plt.plot(lrs, losses)
+    plt.xscale('log')
+    ```
+
+2.  **Learning Rate Issues**:
+    | Symptom | LR Issue | Solution |
+    |---------|----------|----------|
+    | No learning | Too low | Increase by 10x |
+    | Unstable loss | Too high | Decrease by 10x |
+    | Quick plateau | Too high | Use LR scheduler |
+    | Slow convergence | Too low | Warm up then increase |
+
+3.  **Scheduler Debugging**:
+    ```python
+    # Verify scheduler is working
+    for epoch in range(10):
+        train_epoch(...)
+        current_lr = optimizer.param_groups[0]['lr']
+        print(f"Epoch {epoch}: LR = {current_lr}")
+        scheduler.step()
+    ```
+
+#### Phase 4: Data Pipeline Checks
+
+1.  **Data Loading Verification**:
+    ```python
+    # Check data is varying
+    batch1 = next(iter(train_loader))
+    batch2 = next(iter(train_loader))
+
+    print(f"Same batch? {torch.equal(batch1[0], batch2[0])}")
+    print(f"Data range: [{batch1[0].min()}, {batch1[0].max()}]")
+    print(f"Label distribution: {torch.bincount(batch1[1])}")
+
+    # Verify normalization
+    mean = batch1[0].mean(dim=[0, 2, 3])
+    std = batch1[0].std(dim=[0, 2, 3])
+    print(f"Mean: {mean}, Std: {std}")
+    ```
+
+2.  **Common Data Issues**:
+    *   **Incorrect normalization**: Check mean/std values
+    *   **Label mismatch**: Verify labels correspond to data
+    *   **Data leakage**: Check for overlap in splits
+    *   **Augmentation bugs**: Visualize augmented samples
+    *   **Shuffle disabled**: Verify shuffle=True for training
+
+3.  **Data Sanity Checks**:
+    ```python
+    # Overfit on single batch
+    single_batch = next(iter(train_loader))
+    for i in range(1000):
+        loss = train_step(model, single_batch)
+        if i % 100 == 0:
+            print(f"Step {i}: Loss = {loss}")
+
+    # If loss doesn't decrease to ~0, model/loss has bugs
+    ```
+
+#### Phase 5: Memory Leak Detection
+
+1.  **GPU Memory Monitoring**:
+    ```python
+    import torch
+
+    def print_memory_stats():
+        print(f"Allocated: {torch.cuda.memory_allocated() / 1e9:.2f} GB")
+        print(f"Cached: {torch.cuda.memory_reserved() / 1e9:.2f} GB")
+        print(f"Max allocated: {torch.cuda.max_memory_allocated() / 1e9:.2f} GB")
+
+    # Track memory growth
+    for epoch in range(10):
+        train_epoch(...)
+        print(f"Epoch {epoch}:")
+        print_memory_stats()
+        torch.cuda.reset_peak_memory_stats()
+    ```
+
+2.  **Common Memory Leaks**:
+    *   **Storing tensors in lists**: Keeps computation graph
+        ```python
+        # Bad
+        losses.append(loss)
+
+        # Good
+        losses.append(loss.item())
+        ```
+    *   **Not detaching for logging**:
+        ```python
+        # Bad
+        wandb.log({"loss": loss})
+
+        # Good
+        wandb.log({"loss": loss.detach().cpu().item()})
+        ```
+    *   **Accumulating gradients**:
+        ```python
+        # Ensure optimizer.zero_grad() is called
+        ```
+
+3.  **Memory Profiling**:
+    ```python
+    # PyTorch memory profiler
+    with torch.profiler.profile(
+        activities=[torch.profiler.ProfilerActivity.CUDA],
+        profile_memory=True
+    ) as prof:
+        train_epoch(...)
+
+    print(prof.key_averages().table(sort_by="cuda_memory_usage"))
+    ```
+
+### Output Format:
+
+Provide your debugging report in the following structure:
+
+```markdown
+# Training Debug Report
+
+## 1. Issue Summary
+- **Observed Symptom**: [Description]
+- **Severity**: Critical/High/Medium/Low
+- **Affected Component**: [Model/Data/Optimizer/etc.]
+
+## 2. Diagnostic Results
+
+### 2.1 Loss Analysis
+[Findings from loss curve examination]
+
+### 2.2 Gradient Health
+| Layer | Gradient Norm | Status |
+|-------|---------------|--------|
+| ... | ... | ... |
+
+### 2.3 Data Pipeline Status
+- Data loading: [OK/Issue]
+- Normalization: [OK/Issue]
+- Labels: [OK/Issue]
+
+### 2.4 Memory Profile
+- Current usage: X GB
+- Growth per epoch: Y GB
+- Leak detected: Yes/No
+
+## 3. Root Cause Analysis
+**Primary Cause**: [Explanation]
+
+**Contributing Factors**:
+1. [Factor 1]
+2. [Factor 2]
+
+## 4. Recommended Fixes
+
+### Immediate Fix (Stop the bleeding)
+```python
+# Code to apply immediately
+```
+
+### Proper Fix (Root cause resolution)
+```python
+# Code for permanent solution
+```
+
+### Preventive Measures
+1. [Measure 1]
+2. [Measure 2]
+
+## 5. Verification Steps
+1. [ ] Apply fix
+2. [ ] Run training for N epochs
+3. [ ] Verify loss decreases
+4. [ ] Check gradient norms
+5. [ ] Monitor memory usage
+
+## 6. Additional Recommendations
+- [Recommendation for preventing similar issues]
+```
+
+### Constraints:
+
+1.  **Systematic Approach**: Follow the debugging phases in order.
+2.  **Evidence-Based**: Base all diagnoses on actual data/logs.
+3.  **Actionable Fixes**: Provide copy-paste ready code solutions.
+4.  **Verification**: Include steps to confirm the fix works.
+
+Begin by requesting training logs, loss curves, or error messages if not provided, then systematically work through each debugging phase.
+"""

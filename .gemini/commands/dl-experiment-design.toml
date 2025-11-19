@@ -1,0 +1,244 @@
+description = "Design comprehensive machine learning experiments with proper methodology"
+
+prompt = """
+## Mission: ML Experiment Design
+
+Your task is to design a rigorous and comprehensive machine learning experiment plan based on the research question or model improvement goal provided.
+
+### Research Question/Goal:
+{{args}}
+
+### Experiment Design Workflow:
+
+#### Phase 1: Experiment Structure Planning
+
+1.  **Research Question Formalization**:
+    *   Clarify the primary research hypothesis
+    *   Define success criteria and expected outcomes
+    *   Identify independent and dependent variables
+    *   Establish scope and constraints of the experiment
+
+2.  **Experimental Framework**:
+    *   Design the overall experiment structure (factorial, nested, sequential)
+    *   Define experimental conditions and control groups
+    *   Plan data splits (train/validation/test ratios)
+    *   Establish cross-validation strategy (k-fold, stratified, time-series)
+
+3.  **Resource Planning**:
+    *   Estimate computational requirements (GPU hours, memory)
+    *   Plan experiment timeline and milestones
+    *   Identify data storage and logging requirements
+    *   Define team responsibilities if collaborative
+
+#### Phase 2: Hyperparameter Search Strategy
+
+1.  **Parameter Space Definition**:
+    *   List all tunable hyperparameters
+    *   Define search ranges and scales (linear, log, categorical)
+    *   Identify parameter dependencies and constraints
+    *   Prioritize parameters by expected impact
+
+2.  **Search Algorithm Selection**:
+    *   Recommend search strategy based on budget:
+        - Grid Search: For small parameter spaces (<100 combinations)
+        - Random Search: For medium spaces with independent parameters
+        - Bayesian Optimization: For expensive evaluations (<1000 trials)
+        - Hyperband/ASHA: For early stopping with many trials
+        - Population-Based Training: For adaptive schedules
+    *   Configure acquisition functions and surrogate models
+    *   Set early stopping criteria and pruning strategies
+
+3.  **Search Configuration**:
+    ```yaml
+    hyperparameter_search:
+      method: "bayesian_optimization"
+      objective: "minimize_validation_loss"
+      max_trials: 100
+      parameters:
+        learning_rate:
+          type: "log_uniform"
+          min: 1e-5
+          max: 1e-2
+        batch_size:
+          type: "categorical"
+          values: [16, 32, 64, 128]
+        # ... additional parameters
+    ```
+
+#### Phase 3: Ablation Study Design
+
+1.  **Component Identification**:
+    *   List all model components to ablate
+    *   Identify architectural choices to evaluate
+    *   Define data augmentation techniques to test
+    *   List loss function variants and regularization methods
+
+2.  **Ablation Matrix**:
+    | Experiment | Component Removed/Changed | Expected Impact | Priority |
+    |------------|---------------------------|-----------------|----------|
+    | Base | None (full model) | Baseline | - |
+    | A1 | Remove attention | Moderate drop | High |
+    | A2 | Remove skip connections | Significant drop | High |
+    | ... | ... | ... | ... |
+
+3.  **Interaction Studies**:
+    *   Identify potential component interactions
+    *   Design factorial experiments for key interactions
+    *   Plan sequential ablations for dependent components
+
+#### Phase 4: Baseline Selection
+
+1.  **Baseline Categories**:
+    *   **Simple Baselines**: Random, majority class, mean prediction
+    *   **Classical Methods**: Linear models, SVMs, tree-based methods
+    *   **Standard Neural Networks**: MLPs, standard CNNs/RNNs
+    *   **State-of-the-Art**: Recent published models on same task
+    *   **Commercial/API**: GPT-4, Claude, proprietary models
+
+2.  **Baseline Implementation Plan**:
+    | Baseline | Source | Effort | Purpose |
+    |----------|--------|--------|---------|
+    | Random | Implement | Low | Lower bound |
+    | LogReg | sklearn | Low | Linear baseline |
+    | ResNet-50 | torchvision | Medium | Standard deep |
+    | SOTA Paper | Reproduce | High | Upper bound |
+
+3.  **Fair Comparison Protocol**:
+    *   Use identical data splits and preprocessing
+    *   Apply same evaluation metrics
+    *   Ensure comparable compute budgets for tuning
+    *   Document all differences in experimental setup
+
+#### Phase 5: Evaluation Metrics Design
+
+1.  **Primary Metrics**:
+    *   Select task-appropriate primary metric
+    *   Justify metric choice based on business/research goals
+    *   Define statistical significance thresholds
+
+2.  **Secondary Metrics**:
+    | Metric | Type | Purpose | Threshold |
+    |--------|------|---------|-----------|
+    | Accuracy | Classification | Overall performance | - |
+    | F1 (Macro) | Classification | Class balance | - |
+    | AUC-ROC | Classification | Ranking quality | - |
+    | MSE | Regression | Average error | - |
+    | MAE | Regression | Interpretable error | - |
+    | BLEU | Generation | N-gram overlap | - |
+    | Perplexity | Language | Model confidence | - |
+
+3.  **Additional Analysis**:
+    *   Confidence intervals and error bars
+    *   Per-class/per-group performance breakdown
+    *   Calibration metrics (ECE, reliability diagrams)
+    *   Fairness metrics across protected attributes
+    *   Computational efficiency (FLOPs, latency, memory)
+
+4.  **Statistical Testing**:
+    *   Paired t-tests or Wilcoxon for model comparison
+    *   McNemar's test for classifier comparison
+    *   Bootstrap confidence intervals
+    *   Multiple comparison corrections (Bonferroni, Holm)
+
+### Output Format:
+
+Provide your experiment design in the following structure:
+
+```markdown
+# ML Experiment Design Document
+
+## 1. Executive Summary
+- **Research Question**: [Clear statement]
+- **Hypothesis**: [Testable prediction]
+- **Success Criteria**: [Quantitative targets]
+
+## 2. Experiment Overview
+### 2.1 Experimental Conditions
+[Table of conditions]
+
+### 2.2 Data Strategy
+- Training Set: X samples
+- Validation Set: Y samples
+- Test Set: Z samples
+- Cross-validation: [Strategy]
+
+### 2.3 Timeline
+| Phase | Duration | Deliverable |
+|-------|----------|-------------|
+| ... | ... | ... |
+
+## 3. Hyperparameter Search
+### 3.1 Search Space
+[YAML or table specification]
+
+### 3.2 Search Strategy
+[Algorithm choice and configuration]
+
+### 3.3 Computational Budget
+- Total trials: X
+- Estimated GPU hours: Y
+
+## 4. Ablation Studies
+### 4.1 Ablation Matrix
+[Table of ablations]
+
+### 4.2 Expected Insights
+[What each ablation will reveal]
+
+## 5. Baselines
+### 5.1 Baseline Models
+[Table of baselines]
+
+### 5.2 Implementation Sources
+[Links and references]
+
+## 6. Evaluation Framework
+### 6.1 Metrics
+[Table of metrics with justification]
+
+### 6.2 Statistical Analysis Plan
+[Testing procedures]
+
+### 6.3 Visualization Plan
+- Learning curves
+- Confusion matrices
+- ROC/PR curves
+- Ablation charts
+
+## 7. Reproducibility Checklist
+- [ ] Random seeds documented
+- [ ] Environment requirements specified
+- [ ] Data versioning in place
+- [ ] Config files for all experiments
+- [ ] Logging and checkpointing configured
+
+## 8. Risk Mitigation
+| Risk | Likelihood | Impact | Mitigation |
+|------|------------|--------|------------|
+| ... | ... | ... | ... |
+
+## 9. Code Organization
+```
+experiments/
+  configs/
+    base.yaml
+    ablation_*.yaml
+    hparam_search.yaml
+  scripts/
+    train.py
+    evaluate.py
+    analyze_results.py
+  notebooks/
+    analysis.ipynb
+```
+```
+
+### Constraints:
+
+1.  **Scientific Rigor**: Design must follow established ML experimental methodology.
+2.  **Reproducibility**: All experiments must be fully reproducible from documentation.
+3.  **Efficiency**: Balance thoroughness with computational constraints.
+4.  **Actionable**: Provide ready-to-implement experiment configurations.
+
+Begin by clarifying any ambiguities in the research question, then systematically work through each design phase.
+"""

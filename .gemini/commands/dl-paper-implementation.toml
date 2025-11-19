@@ -1,0 +1,360 @@
+description = "Systematic workflow for implementing deep learning research papers"
+
+prompt = """
+## Mission: Research Paper Implementation
+
+Your task is to guide the systematic implementation of a deep learning research paper, ensuring accurate reproduction of results and proper understanding of key concepts.
+
+### Paper Reference:
+{{args}}
+
+### Implementation Workflow:
+
+#### Phase 1: Paper Understanding
+
+1.  **Initial Reading (30 min)**:
+    *   Read abstract and conclusion first
+    *   Identify the main contribution
+    *   Note the claimed performance improvements
+    *   Identify the baseline methods
+
+2.  **Deep Reading Checklist**:
+    - [ ] Problem formulation and motivation
+    - [ ] Related work positioning
+    - [ ] Method overview and intuition
+    - [ ] Mathematical formulations
+    - [ ] Architecture details
+    - [ ] Training procedure
+    - [ ] Evaluation protocol
+    - [ ] Ablation studies
+    - [ ] Limitations acknowledged
+
+3.  **Key Information Extraction**:
+    ```markdown
+    ## Paper Summary
+
+    ### Problem Statement
+    [What problem does this paper solve?]
+
+    ### Main Contribution
+    [What is novel about this approach?]
+
+    ### Key Insight
+    [What is the core idea that makes it work?]
+
+    ### Method in One Paragraph
+    [Explain the method to a colleague]
+    ```
+
+4.  **Supplementary Materials**:
+    *   Check for supplementary PDF with implementation details
+    *   Look for official code repository
+    *   Find project page with additional resources
+    *   Review video presentations/talks
+
+#### Phase 2: Architecture Extraction
+
+1.  **Model Architecture Documentation**:
+    ```markdown
+    ## Architecture Specification
+
+    ### Overall Structure
+    [Diagram or description of main components]
+
+    ### Component Details
+
+    #### Encoder
+    - Input: [shape, type]
+    - Layers: [list with dimensions]
+    - Output: [shape]
+
+    #### Decoder
+    - Input: [shape]
+    - Layers: [list with dimensions]
+    - Output: [shape]
+
+    ### Activation Functions
+    - Hidden layers: [ReLU/GELU/SiLU]
+    - Output layer: [Softmax/Sigmoid/None]
+
+    ### Normalization
+    - Type: [BatchNorm/LayerNorm/GroupNorm]
+    - Location: [Before/After activation]
+
+    ### Initialization
+    - Weights: [Xavier/He/specific]
+    - Biases: [zeros/specific values]
+    ```
+
+2.  **Architecture Diagram**:
+    ```
+    Input
+      |
+      v
+    [Embedding Layer]
+      |
+      v
+    [Encoder Block x N]
+      |
+      v
+    [Attention Mechanism]
+      |
+      v
+    [Decoder Block x M]
+      |
+      v
+    [Output Head]
+      |
+      v
+    Output
+    ```
+
+3.  **Hyperparameter Table**:
+    | Parameter | Value | Source |
+    |-----------|-------|--------|
+    | Hidden dim | 768 | Table 1 |
+    | Num layers | 12 | Section 3.2 |
+    | Heads | 12 | Section 3.2 |
+    | Dropout | 0.1 | Section 4.1 |
+    | ... | ... | ... |
+
+#### Phase 3: Key Implementation Details
+
+1.  **Critical Implementation Aspects**:
+    *   **Loss Function**:
+        ```python
+        # Extract exact formulation from paper
+        # Note any weighting or masking
+        ```
+    *   **Data Preprocessing**:
+        ```python
+        # Exact normalization values
+        # Augmentation pipeline
+        # Tokenization/encoding scheme
+        ```
+    *   **Optimization**:
+        ```python
+        # Optimizer choice and parameters
+        # Learning rate schedule
+        # Gradient clipping value
+        ```
+
+2.  **Gotchas and Subtle Details**:
+    | Section | Detail | Easy to Miss |
+    |---------|--------|--------------|
+    | 3.2 | "We add residual after LayerNorm" | Order matters |
+    | 4.1 | "Warmup for 10k steps" | Not in hyperparams |
+    | A.2 | "Dropout only during training" | Inference differs |
+
+3.  **Equations to Code**:
+    ```python
+    # Paper Equation (3):
+    # h = LayerNorm(x + Attention(x))
+
+    # Implementation:
+    def forward(self, x):
+        attn_output = self.attention(x)
+        x = x + attn_output  # Residual
+        x = self.layer_norm(x)  # Post-norm
+        return x
+    ```
+
+4.  **Ambiguity Resolution**:
+    | Ambiguity | Options | Resolution |
+    |-----------|---------|------------|
+    | "Standard transformer" | Original/GPT/BERT style | Check citation |
+    | "Following [X]" | Multiple variants | Check [X] paper |
+    | Unspecified hyperparameter | Reasonable defaults | Check code/authors |
+
+#### Phase 4: Implementation Plan
+
+1.  **Module Breakdown**:
+    ```
+    src/
+      models/
+        __init__.py
+        backbone.py        # Main architecture
+        attention.py       # Custom attention mechanisms
+        losses.py          # Loss functions
+      data/
+        __init__.py
+        dataset.py         # Dataset class
+        transforms.py      # Preprocessing
+      training/
+        __init__.py
+        trainer.py         # Training loop
+        schedulers.py      # LR schedulers
+      evaluation/
+        __init__.py
+        metrics.py         # Evaluation metrics
+      configs/
+        base.yaml          # Hyperparameters
+      scripts/
+        train.py           # Training entry point
+        evaluate.py        # Evaluation script
+    ```
+
+2.  **Implementation Order**:
+    1. [ ] Data loading and preprocessing
+    2. [ ] Model architecture (forward pass)
+    3. [ ] Loss function
+    4. [ ] Training loop (basic)
+    5. [ ] Evaluation metrics
+    6. [ ] Logging and checkpointing
+    7. [ ] Learning rate scheduling
+    8. [ ] Full training with all tricks
+
+3.  **Testing Strategy**:
+    ```python
+    # Unit tests for each component
+    def test_attention_output_shape():
+        attn = MultiHeadAttention(d_model=512, n_heads=8)
+        x = torch.randn(2, 10, 512)
+        out = attn(x)
+        assert out.shape == (2, 10, 512)
+
+    def test_model_forward():
+        model = PaperModel(config)
+        x = torch.randn(2, 3, 224, 224)
+        out = model(x)
+        assert out.shape == (2, num_classes)
+    ```
+
+#### Phase 5: Reproducibility Checklist
+
+1.  **Data**:
+    - [ ] Exact dataset version/split
+    - [ ] Preprocessing matches paper exactly
+    - [ ] Data augmentation during training only
+    - [ ] Evaluation on correct test set
+
+2.  **Model**:
+    - [ ] Architecture matches paper
+    - [ ] Initialization scheme correct
+    - [ ] Number of parameters matches
+    - [ ] FLOPs/MACs matches (if reported)
+
+3.  **Training**:
+    - [ ] Optimizer and hyperparameters exact
+    - [ ] Learning rate schedule implemented
+    - [ ] Training epochs/steps correct
+    - [ ] Batch size and gradient accumulation
+    - [ ] Random seed set for reproducibility
+
+4.  **Evaluation**:
+    - [ ] Correct evaluation metrics
+    - [ ] Proper test-time augmentation (if used)
+    - [ ] Ensemble procedure (if applicable)
+    - [ ] Statistical significance testing
+
+5.  **Common Reproducibility Issues**:
+    | Issue | Solution |
+    |-------|----------|
+    | Different framework defaults | Explicitly set all parameters |
+    | Unclear preprocessing | Check official code |
+    | Missing hyperparameters | Contact authors |
+    | Hardware differences | Note GPU type, check for determinism |
+
+### Output Format:
+
+Provide your implementation guide in the following structure:
+
+```markdown
+# Paper Implementation Guide
+
+## 1. Paper Overview
+- **Title**: [Full title]
+- **Authors**: [Authors]
+- **Venue**: [Conference/Journal, Year]
+- **Links**: [Paper, Code, Project Page]
+
+### 1.1 Summary
+[2-3 paragraph summary of the paper]
+
+### 1.2 Key Contributions
+1. [Contribution 1]
+2. [Contribution 2]
+3. [Contribution 3]
+
+## 2. Architecture Specification
+
+### 2.1 Model Diagram
+```
+[ASCII or description]
+```
+
+### 2.2 Component Details
+[Detailed specifications]
+
+### 2.3 Hyperparameters
+| Parameter | Value | Location in Paper |
+|-----------|-------|-------------------|
+| ... | ... | ... |
+
+## 3. Implementation Details
+
+### 3.1 Critical Code Sections
+```python
+# Key implementation with explanations
+```
+
+### 3.2 Gotchas and Tricks
+[List of subtle details]
+
+### 3.3 Ambiguity Resolutions
+[How ambiguities were resolved]
+
+## 4. Implementation Roadmap
+
+### 4.1 File Structure
+```
+project/
+  ...
+```
+
+### 4.2 Implementation Order
+1. [Step 1] - [Time estimate]
+2. [Step 2] - [Time estimate]
+...
+
+### 4.3 Milestones
+| Milestone | Success Criteria | Date |
+|-----------|------------------|------|
+| Data pipeline | Batches load correctly | ... |
+| Model forward | Shapes match | ... |
+| Training | Loss decreases | ... |
+| Reproduce | Match paper results | ... |
+
+## 5. Reproducibility Verification
+
+### 5.1 Sanity Checks
+- [ ] Parameter count: Expected X, Got Y
+- [ ] Single batch overfit: Loss -> 0
+- [ ] Learning rate finder: Optimal LR ~ Z
+
+### 5.2 Results Comparison
+| Metric | Paper | Ours | Status |
+|--------|-------|------|--------|
+| ... | ... | ... | ... |
+
+## 6. Troubleshooting
+
+### Common Issues
+1. **Issue**: [Description]
+   **Solution**: [Fix]
+
+## 7. References
+- [Official code]: [URL]
+- [Blog post]: [URL]
+- [Other implementations]: [URLs]
+```
+
+### Constraints:
+
+1.  **Accuracy**: Implementation must match paper specifications exactly.
+2.  **Verifiability**: All claims must reference specific paper sections.
+3.  **Completeness**: Cover all aspects needed for reproduction.
+4.  **Practicality**: Provide working code snippets.
+
+Begin by fetching and analyzing the paper content, then systematically work through each implementation phase.
+"""
